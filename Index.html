@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi lista de tareas</title>
+  <style>
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 60px 20px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #0d1117;
+      background-image: radial-gradient(circle at 20% 20%, rgba(61,131,255,0.12), transparent 40%),
+                         radial-gradient(circle at 80% 30%, rgba(255,199,71,0.10), transparent 40%);
+      color: #e6edf3;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 30px;
+      margin-bottom: 30px;
+      color: #ffffff;
+      text-shadow: 0 0 18px rgba(61,131,255,0.5);
+    }
+
+    .contenedor {
+      width: 100%;
+      max-width: 480px;
+      background-color: #161b22;
+      border: 1px solid #2a3140;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 0 30px rgba(61,131,255,0.15);
+    }
+
+    .fila-input {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 25px;
+      align-items: center;
+    }
+
+    #tarea-input,
+    #fecha-input {
+      flex: 1;
+      min-width: 140px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid #2a3140;
+      background-color: #0d1117;
+      color: #e6edf3;
+      font-size: 14px;
+      outline: none;
+      transition: 0.2s;
+      color-scheme: dark;
+    }
+
+    #tarea-input:focus,
+    #fecha-input:focus {
+      border-color: #3d83ff;
+      box-shadow: 0 0 12px rgba(61,131,255,0.5);
+    }
+
+    #btn-agregar {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #f6c343;
+      color: #1a1400;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    #btn-agregar:hover {
+      box-shadow: 0 0 16px rgba(246,195,67,0.6);
+      transform: translateY(-1px);
+    }
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: #8891a8;
+      white-space: nowrap;
+    }
+
+    #lista-tareas {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #lista-tareas li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background-color: #0d1117;
+      border: 1px solid #2a3140;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      transition: 0.2s;
+      flex-wrap: wrap;
+    }
+
+    #lista-tareas li[contenteditable="true"] {
+      border-color: #f6c343;
+      box-shadow: 0 0 12px rgba(246,195,67,0.4);
+    }
+
+    #lista-tareas li.completada .texto-tarea {
+      text-decoration: line-through;
+      color: #6e7681;
+    }
+
+    .texto-tarea {
+      flex: 1;
+      min-width: 100px;
+    }
+
+    .acciones {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    #lista-tareas button {
+      border: none;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      color: white;
+      min-width: 78px;
+      text-align: center;
+      transition: 0.2s;
+    }
+
+    .btn-completar {
+      background-color: #3d83ff;
+    }
+
+    .btn-completar:hover {
+      box-shadow: 0 0 10px rgba(61,131,255,0.7);
+    }
+
+    .btn-editar {
+      background-color: #f6c343;
+      color: #1a1400;
+    }
+
+    .btn-editar:hover {
+      box-shadow: 0 0 10px rgba(246,195,67,0.7);
+    }
+
+    .btn-eliminar {
+      background-color: #e5484d;
+    }
+
+    .btn-eliminar:hover {
+      box-shadow: 0 0 10px rgba(229,72,77,0.7);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <h1>Mi lista de tareas</h1>
+    <div class="fila-input">
+      <input type="text" id="tarea-input">
+      <input type="datetime-local" id="fecha-input">
+      <button id="btn-agregar">Agregar</button>
+      <label><input type="checkbox" id="mostrar-fecha"> Mostrar fecha</label>
+    </div>
+    <ul id="lista-tareas"></ul>
+  </div>
+  <script>
+    const boton = document.getElementById("btn-agregar");
+    const lista = document.getElementById("lista-tareas");
+    const input = document.getElementById("tarea-input");
+    const fechaInput = document.getElementById("fecha-input");
+    const mostrarFecha = document.getElementById("mostrar-fecha");
+
+    // Recuerda cuál tarea está en modo edición ahora mismo (o null si ninguna)
+    let tareaEnEdicion = null;
+
+    function agregarTarea(){
+      const texto = input.value.trim();
+      if (texto === "") {
+        return; // No agregar tareas vacías
+      }
+
+      let fecha = fechaInput.value;
+
+      if (mostrarFecha.checked) {
+        fecha = " - " + fecha;
+      } else {
+        fecha = "";
+      }
+
+      lista.innerHTML += "<li><span class='texto-tarea'>" + texto + fecha + "</span>" +
+        "<div class='acciones'>" +
+        "<button class='btn-completar'>Completar</button>" +
+        "<button class='btn-eliminar'>Eliminar</button>" +
+        "<button class='btn-editar'>Editar</button>" +
+        "</div></li>";
+
+      input.value = "";
+      fechaInput.value = "";
+    }
+
+    boton.addEventListener("click", agregarTarea);
+
+    input.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        agregarTarea();
+      }
+    });
+
+    lista.addEventListener("click", function(event) {
+      // .closest("li") encuentra el <li> más cercano hacia arriba,
+      // sin importar si el clic fue en el botón o en algo dentro de él
+      const tarea = event.target.closest("li");
+
+      if (event.target.classList.contains("btn-completar")) {
+        tarea.classList.toggle("completada");
+      }
+
+      if (event.target.classList.contains("btn-eliminar")) {
+        tarea.remove();
+      }
+
+      if (event.target.classList.contains("btn-editar")) {
+        // Si ya había otra tarea en edición y no es esta, la apagamos primero
+        if (tareaEnEdicion && tareaEnEdicion !== tarea) {
+          tareaEnEdicion.contentEditable = "false";
+        }
+
+        if (tarea.contentEditable === "true") {
+          tarea.contentEditable = "false";
+          tareaEnEdicion = null;
+        } else {
+          tarea.contentEditable = "true";
+          tarea.focus();
+          tareaEnEdicion = tarea;
+        }
+      }
+    });
+
+    // Respaldo: si el usuario hace clic fuera sin usar el botón Editar, también se apaga
+    lista.addEventListener("focusout", function(event) {
+      if (event.target.tagName === "LI") {
+        event.target.contentEditable = "false";
+        if (tareaEnEdicion === event.target) {
+          tareaEnEdicion = null;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
