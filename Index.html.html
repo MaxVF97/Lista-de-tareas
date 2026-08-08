@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi lista de tareas</title>
+</head>
+<body>
+  <h1>Mi lista de tareas</h1>
+  <input type="text" id="tarea-input">
+  <button id="btn-agregar">Agregar</button>
+  <ul id="lista-tareas"></ul>
+  <script>
+//Desde aquí se puede agregar el código JavaScript para manejar la lista de tareas
+
+
+//Creamos las variables para el botón y la lista
+    const boton = document.getElementById("btn-agregar");
+    const lista = document.getElementById("lista-tareas");
+    const input = document.getElementById("tarea-input");
+
+// Función para agregar una tarea a la lista
+//Creamos el botón de eliminar y completar para cada tarea agregada
+    function agregarTarea(){
+      const texto = input.value.trim(); 
+       if (texto === "") {
+        return; // No agregar tareas vacías
+      }
+      lista.innerHTML += "<li>" + texto +"<button class='btn-completar'>Completar</button>" + "<button class='btn-eliminar'>Eliminar</button>" + "<button class='btn-editar'>Editar</button></li>";
+      input.value = "";
+    }
+// Agregar un evento al botón para que llame a la función agregarTarea cuando se haga clic
+    boton.addEventListener("click", agregarTarea);
+
+// Agregar un evento al input para que llame a la función agregarTarea cuando se presione la tecla Enter
+    input.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        agregarTarea();
+      }
+    });
+// Agregar un evento a la lista para que elimine la tarea cuando se haga clic en el botón de eliminar
+    lista.addEventListener("click", function(event) {
+      if (event.target.classList.contains("btn-completar")) {
+        event.target.parentElement.classList.toggle("completada");
+      }
+      if (event.target.classList.contains("btn-eliminar")) {
+        event.target.parentElement.remove();
+      }
+      if (event.target.classList.contains("btn-editar")) {
+        event.target.parentElement.contentEditable = event.target.parentElement.contentEditable !== "true";
+        }
+      }
+    );
+
+  </script>
+</body>
+</html>
