@@ -4,7 +4,7 @@ Aplicación web para organizar el día a día: agrega tareas, ponles fecha y hor
 
 ## 🚀 Demo en vivo
 
-👉 [Ver la app funcionando](https://TU-USUARIO.github.io/Lista-de-tareas/)
+👉 [Ver la app funcionando](https://MaxVF97.github.io/Lista-de-tareas/)
 
 ## ✨ Funcionalidades
 
