@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Mi lista de tareas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
 
     body {
@@ -21,10 +23,36 @@
 
     h1 {
       text-align: center;
-      font-size: 30px;
-      margin-bottom: 30px;
+      font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #2dd4bf 10%, #a78bfa 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
       color: #ffffff;
-      text-shadow: 0 0 18px rgba(61,131,255,0.5);
+    }
+
+    .encabezado {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    body {
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .icono-flotante {
+      position: absolute;
+      opacity: 0.16;
+      pointer-events: none;
+      z-index: 0;
     }
 
     .contenedor {
@@ -35,6 +63,8 @@
       border-radius: 16px;
       padding: 30px;
       box-shadow: 0 0 30px rgba(61,131,255,0.15);
+      position: relative;
+      z-index: 1;
     }
 
     .fila-input {
@@ -43,6 +73,10 @@
       gap: 10px;
       margin-bottom: 25px;
       align-items: center;
+    }
+
+    #fecha-input {
+      display: none;
     }
 
     #tarea-input,
@@ -98,10 +132,10 @@
     }
 
     #lista-tareas li {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr auto;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
       background-color: #0d1117;
       border: 1px solid #2a3140;
       border-radius: 10px;
@@ -109,28 +143,40 @@
       margin-bottom: 10px;
       font-size: 14px;
       transition: 0.2s;
-      flex-wrap: wrap;
     }
 
     #lista-tareas li[contenteditable="true"] {
+      outline: none;
       border-color: #f6c343;
       box-shadow: 0 0 12px rgba(246,195,67,0.4);
     }
 
-    #lista-tareas li.completada .texto-tarea {
+    #lista-tareas li.completada .nombre-tarea {
       text-decoration: line-through;
       color: #6e7681;
     }
 
     .texto-tarea {
-      flex: 1;
-      min-width: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .nombre-tarea {
+      overflow-wrap: break-word;
+    }
+
+    .fecha-tag {
+      font-size: 12px;
+      color: #6e7681;
     }
 
     .acciones {
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     #lista-tareas button {
@@ -173,13 +219,121 @@
   </style>
 </head>
 <body>
+
+  <!-- Íconos decorativos de fondo, dibujados en SVG -->
+  <svg class="icono-flotante" style="top: 6%; left: 5%;" width="60" height="60" viewBox="0 0 70 70">
+    <rect x="10" y="10" width="50" height="50" rx="10" fill="none" stroke="#2dd4bf" stroke-width="3"/>
+    <path d="M22 35 L32 45 L48 25" fill="none" stroke="#2dd4bf" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <svg class="icono-flotante" style="top: 4%; right: 8%;" width="50" height="50" viewBox="0 0 60 60">
+    <rect x="8" y="14" width="44" height="38" rx="6" fill="none" stroke="#a78bfa" stroke-width="3"/>
+    <line x1="8" y1="24" x2="52" y2="24" stroke="#a78bfa" stroke-width="3"/>
+    <line x1="18" y1="8" x2="18" y2="20" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/>
+    <line x1="42" y1="8" x2="42" y2="20" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/>
+  </svg>
+
+  <svg class="icono-flotante" style="top: 22%; left: 3%;" width="40" height="40" viewBox="0 0 55 55">
+    <path d="M10 45 L14 32 L38 8 L47 17 L23 41 Z" fill="none" stroke="#a78bfa" stroke-width="3" stroke-linejoin="round"/>
+    <line x1="31" y1="15" x2="40" y2="24" stroke="#a78bfa" stroke-width="3"/>
+  </svg>
+
+  <svg class="icono-flotante" style="top: 30%; right: 4%;" width="45" height="45" viewBox="0 0 34 34">
+    <path d="M17 2 L4 20 H15 L11 32 L30 12 H18 Z" fill="none" stroke="#2dd4bf" stroke-width="2.5" stroke-linejoin="round"/>
+  </svg>
+
+  <svg class="icono-flotante" style="bottom: 28%; left: 6%;" width="45" height="45" viewBox="0 0 34 34">
+    <circle cx="17" cy="17" r="15" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <circle cx="17" cy="17" r="4" fill="#2dd4bf"/>
+  </svg>
+
+  <svg class="icono-flotante" style="bottom: 18%; right: 5%;" width="65" height="65" viewBox="0 0 65 65">
+    <rect x="8" y="8" width="49" height="49" rx="10" fill="none" stroke="#a78bfa" stroke-width="3"/>
+    <path d="M20 32 L28 40 L45 20" fill="none" stroke="#a78bfa" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <svg class="icono-flotante" style="bottom: 8%; left: 10%;" width="55" height="55" viewBox="0 0 60 60">
+    <rect x="8" y="14" width="44" height="38" rx="6" fill="none" stroke="#2dd4bf" stroke-width="3"/>
+    <line x1="8" y1="24" x2="52" y2="24" stroke="#2dd4bf" stroke-width="3"/>
+    <line x1="18" y1="8" x2="18" y2="20" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round"/>
+    <line x1="42" y1="8" x2="42" y2="20" stroke="#2dd4bf" stroke-width="3" stroke-linecap="round"/>
+  </svg>
+
+  <svg class="icono-flotante" style="bottom: 6%; right: 12%;" width="42" height="42" viewBox="0 0 55 55">
+    <path d="M10 45 L14 32 L38 8 L47 17 L23 41 Z" fill="none" stroke="#a78bfa" stroke-width="3" stroke-linejoin="round"/>
+    <line x1="31" y1="15" x2="40" y2="24" stroke="#a78bfa" stroke-width="3"/>
+  </svg>
+
+  <svg class="icono-flotante" style="top: 45%; left: 2%;" width="35" height="35" viewBox="0 0 34 34">
+    <circle cx="17" cy="17" r="15" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <circle cx="17" cy="17" r="4" fill="#a78bfa"/>
+  </svg>
+
+  <svg class="icono-flotante" style="top: 55%; right: 3%;" width="38" height="38" viewBox="0 0 70 70">
+    <rect x="10" y="10" width="50" height="50" rx="10" fill="none" stroke="#2dd4bf" stroke-width="3"/>
+    <path d="M22 35 L32 45 L48 25" fill="none" stroke="#2dd4bf" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Íconos extra en la franja central, para no dejar el centro vacío en pantallas anchas -->
+  <svg class="icono-flotante" style="top: 2%; left: 42%;" width="36" height="36" viewBox="0 0 34 34">
+    <path d="M17 2 L4 20 H15 L11 32 L30 12 H18 Z" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linejoin="round"/>
+  </svg>
+
+  <svg class="icono-flotante" style="bottom: 3%; left: 46%;" width="34" height="34" viewBox="0 0 34 34">
+    <circle cx="17" cy="17" r="15" fill="none" stroke="#2dd4bf" stroke-width="2.5"/>
+    <circle cx="17" cy="17" r="4" fill="#2dd4bf"/>
+  </svg>
+
+  <svg class="icono-flotante" style="top: 38%; left: 16%;" width="34" height="34" viewBox="0 0 55 55">
+    <path d="M10 45 L14 32 L38 8 L47 17 L23 41 Z" fill="none" stroke="#2dd4bf" stroke-width="3" stroke-linejoin="round"/>
+    <line x1="31" y1="15" x2="40" y2="24" stroke="#2dd4bf" stroke-width="3"/>
+  </svg>
+
+  <svg class="icono-flotante" style="top: 40%; right: 17%;" width="38" height="38" viewBox="0 0 60 60">
+    <rect x="8" y="14" width="44" height="38" rx="6" fill="none" stroke="#a78bfa" stroke-width="3"/>
+    <line x1="8" y1="24" x2="52" y2="24" stroke="#a78bfa" stroke-width="3"/>
+    <line x1="18" y1="8" x2="18" y2="20" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/>
+    <line x1="42" y1="8" x2="42" y2="20" stroke="#a78bfa" stroke-width="3" stroke-linecap="round"/>
+  </svg>
+
+  <svg class="icono-flotante" style="top: 68%; left: 20%;" width="30" height="30" viewBox="0 0 34 34">
+    <circle cx="17" cy="17" r="15" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <circle cx="17" cy="17" r="4" fill="#a78bfa"/>
+  </svg>
+
+  <svg class="icono-flotante" style="top: 70%; right: 20%;" width="40" height="40" viewBox="0 0 70 70">
+    <rect x="10" y="10" width="50" height="50" rx="10" fill="none" stroke="#2dd4bf" stroke-width="3"/>
+    <path d="M22 35 L32 45 L48 25" fill="none" stroke="#2dd4bf" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <svg class="icono-flotante" style="top: 15%; left: 22%;" width="26" height="26" viewBox="0 0 34 34">
+    <path d="M17 2 L4 20 H15 L11 32 L30 12 H18 Z" fill="none" stroke="#2dd4bf" stroke-width="2.5" stroke-linejoin="round"/>
+  </svg>
+
+  <svg class="icono-flotante" style="top: 18%; right: 24%;" width="28" height="28" viewBox="0 0 55 55">
+    <path d="M10 45 L14 32 L38 8 L47 17 L23 41 Z" fill="none" stroke="#a78bfa" stroke-width="3" stroke-linejoin="round"/>
+    <line x1="31" y1="15" x2="40" y2="24" stroke="#a78bfa" stroke-width="3"/>
+  </svg>
+
   <div class="contenedor">
-    <h1>Mi lista de tareas</h1>
+    <div class="encabezado">
+      <svg width="34" height="34" viewBox="0 0 34 34">
+        <rect x="2" y="2" width="30" height="30" rx="8" fill="none" stroke="url(#gradLogo)" stroke-width="3"/>
+        <path d="M9 17 L14 22 L25 10" fill="none" stroke="url(#gradLogo)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs>
+          <linearGradient id="gradLogo" x1="0" y1="0" x2="34" y2="34">
+            <stop offset="0%" stop-color="#2dd4bf"/>
+            <stop offset="100%" stop-color="#a78bfa"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <h1>Mi lista de tareas</h1>
+    </div>
     <div class="fila-input">
       <input type="text" id="tarea-input">
       <input type="datetime-local" id="fecha-input">
       <button id="btn-agregar">Agregar</button>
-      <label><input type="checkbox" id="mostrar-fecha"> Mostrar fecha</label>
+      <label><input type="checkbox" id="mostrar-fecha"> Agregar fecha</label>
     </div>
     <ul id="lista-tareas"></ul>
   </div>
@@ -199,26 +353,89 @@
         return; // No agregar tareas vacías
       }
 
-      let fecha = fechaInput.value;
+      let fechaRaw = fechaInput.value;
+      let fechaHTML = "";
+      let atributoFecha = "";
 
-      if (mostrarFecha.checked) {
-        fecha = " - " + fecha;
-      } else {
-        fecha = "";
+      if (mostrarFecha.checked && fechaRaw !== "") {
+        const fechaObj = new Date(fechaRaw);
+        const fechaLegible = fechaObj.toLocaleString('es-MX', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        fechaHTML = "<span class='fecha-tag'>📅 " + fechaLegible + "</span>";
+        atributoFecha = " data-fecha='" + fechaRaw + "'";
       }
 
-      lista.innerHTML += "<li><span class='texto-tarea'>" + texto + fecha + "</span>" +
+      lista.insertAdjacentHTML("beforeend", "<li" + atributoFecha + "><span class='texto-tarea'>" +
+        "<span class='nombre-tarea'>" + texto + "</span>" +
+        fechaHTML +
+        "</span>" +
         "<div class='acciones'>" +
         "<button class='btn-completar'>Completar</button>" +
         "<button class='btn-eliminar'>Eliminar</button>" +
         "<button class='btn-editar'>Editar</button>" +
-        "</div></li>";
+        "</div></li>");
+
+      ordenarConAnimacion();
 
       input.value = "";
       fechaInput.value = "";
     }
 
+    // Devuelve la fecha de un <li> en milisegundos, o Infinity si no tiene
+    // (así, al ordenar de menor a mayor, las tareas sin fecha quedan al final)
+    function obtenerFechaMs(li) {
+      const fechaAttr = li.dataset.fecha;
+      return fechaAttr ? new Date(fechaAttr).getTime() : Infinity;
+    }
+
+    // Reordena la lista (pendientes por fecha, completadas al final) con animación de deslizamiento
+    function ordenarConAnimacion() {
+      const items = Array.from(lista.children);
+
+      // 1. FIRST: guardamos dónde está cada tarea ahora mismo
+      const posicionesViejas = new Map();
+      items.forEach(function(li) {
+        posicionesViejas.set(li, li.getBoundingClientRect().top);
+      });
+
+      // Separamos pendientes (ordenadas por fecha) de completadas (van al final)
+      const pendientes = items.filter(function(li) { return !li.classList.contains("completada"); });
+      const completadas = items.filter(function(li) { return li.classList.contains("completada"); });
+      pendientes.sort(function(a, b) { return obtenerFechaMs(a) - obtenerFechaMs(b); });
+      const nuevoOrden = pendientes.concat(completadas);
+
+      // 2. LAST: los movemos de golpe a su posición final real
+      nuevoOrden.forEach(function(li) { lista.appendChild(li); });
+
+      // 3. INVERT + 4. PLAY: por cada uno, calculamos cuánto se movió y animamos el regreso
+      nuevoOrden.forEach(function(li) {
+        const posVieja = posicionesViejas.get(li);
+        const posNueva = li.getBoundingClientRect().top;
+        const delta = posVieja - posNueva;
+
+        if (delta !== 0) {
+          li.style.transition = "none";
+          li.style.transform = "translateY(" + delta + "px)";
+
+          requestAnimationFrame(function() {
+            li.style.transition = "transform 0.35s ease";
+            li.style.transform = "";
+          });
+        }
+      });
+    }
+
     boton.addEventListener("click", agregarTarea);
+
+    // Muestra u oculta el selector de fecha según el checkbox
+    mostrarFecha.addEventListener("change", function() {
+      fechaInput.style.display = mostrarFecha.checked ? "block" : "none";
+    });
 
     input.addEventListener("keydown", function(event) {
       if (event.key === "Enter") {
@@ -233,6 +450,7 @@
 
       if (event.target.classList.contains("btn-completar")) {
         tarea.classList.toggle("completada");
+        ordenarConAnimacion();
       }
 
       if (event.target.classList.contains("btn-eliminar")) {
